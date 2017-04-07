@@ -119,6 +119,9 @@ public class DCEL {
 		Segment[] s = new Segment[0];
 		
 		if(Points.length > 3){
+			for(Point point : Points){
+				point.vectors.clear();
+			}Vectors.clear();
 			
 			MergeSort sort = new MergeSort();
 			Points = sort.sortY(Points);

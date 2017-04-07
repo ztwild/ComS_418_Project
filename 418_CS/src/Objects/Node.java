@@ -35,6 +35,14 @@ public class Node{
 		}
 	}
 	
+	public boolean endAbove(Node n){
+		if(this.seg != null){
+			return this.seg.endAbove(n.seg);
+		}else{
+			return false;
+		}
+	}
+	
 	public String toString(){
 		if(pt != null){
 			return pt.toString();
@@ -53,7 +61,7 @@ public class Node{
 		}
 	}
 	
-	//This could return null
+	//This can return null
 	public Node next(){
 		Node temp = this;
 		if(temp.right != null){
@@ -72,7 +80,7 @@ public class Node{
 		return temp;
 	}
 	
-	//This could return null
+	//This can return null
 	public Node prev(){
 		Node temp = this;
 		if(temp.left != null){
@@ -91,14 +99,16 @@ public class Node{
 		return temp;
 	}
 	
-	public void delete(){
-		while(left != null && right != null){
+	public Node delete(){
+		Node lastParent = null;
+		while(left != null || right != null){
 			if(left != null){
 				left.rotateRight();
 			}else{
 				right.rotateLeft();
 			}
 		}
+		lastParent = parent;
 		if(parent != null && parent.left == this){
 			parent.left = null;
 			parent = null;
@@ -106,7 +116,7 @@ public class Node{
 			parent.right = null;
 			parent = null;
 		}
-		
+		return lastParent;
 	}
 	
 	public void rotateLeft(){
@@ -126,6 +136,7 @@ public class Node{
 			swap.parent = this;
 			left = swap;
 		}
+		
 	}
 	
 	public void rotateRight(){

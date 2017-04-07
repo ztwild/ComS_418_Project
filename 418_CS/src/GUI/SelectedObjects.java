@@ -60,7 +60,6 @@ public class SelectedObjects {
 //		for(int i = 0; i < face.x.length; i++){
 //			System.out.println("x: "+ face.x[i] + " y: " + face.y[i]);
 //		}
-		g2.setColor(Color.GREEN);
 		if(face != null && face.n > 2){
 			g2.fillPolygon(face.x, face.y, face.n);
 		}

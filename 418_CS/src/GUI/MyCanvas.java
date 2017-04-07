@@ -16,12 +16,16 @@ public class MyCanvas extends Canvas{
 	private SelectedObjects so;
 	
 	public DCEL dcel = new DCEL();
+	public MouseEvents ms;
+	
 	public MyCanvas(int size){
+//		ms = new MouseEvents(this);		//For testing
+//		this.addMouseListener(ms);		//For testing
+		
 		this.addMouseListener(new MouseEvents(this));
 		this.size = size/10;
 		dim = 1000;
 		setSize(dim, dim);
-//        setBackground(Color.WHITE);
         so = new SelectedObjects();
 	}
 	
@@ -69,6 +73,7 @@ public class MyCanvas extends Canvas{
 	}
 	
 	public void Triangulate(){
+		so.clear();
 		dcel.triangulate();
 		repaint();
 	}
@@ -77,9 +82,8 @@ public class MyCanvas extends Canvas{
 		if(so.point != null && dcel.Segments.length > 0){
 			Segment[] s = dcel.Segments;
 			PointLocation pl = new PointLocation();
-			ArrayList<Vector> v = pl.PointLocation(so.point, s);
-			Face f = new Face(v);
-			so.select(f);
+			Face face = pl.locatePoint(so.point, s);
+			so.select(face);
 			repaint();
 		}else{
 			System.out.println("Point isn't located in a face");
@@ -121,12 +125,16 @@ public class MyCanvas extends Canvas{
 	
 	public void paint(Graphics g){
 		Graphics2D g2 = (Graphics2D) g;
-		if(so.face != null && so.face.n > 2){
-			so.drawFace(g2);
-		}else if(so.face != null){
-			setBackground(Color.GREEN);
-		}else{
+		if(so.face == null){
 			setBackground(Color.WHITE);
+		}else if( so.face.inside){
+			setBackground(Color.WHITE);
+			g2.setColor(Color.GREEN);
+			so.drawFace(g2);
+		}else{
+			setBackground(Color.GREEN);
+			g2.setColor(Color.WHITE);
+			so.drawFace(g2);
 		}
 		//Draws a black grid
 		g2.setColor(Color.BLACK);

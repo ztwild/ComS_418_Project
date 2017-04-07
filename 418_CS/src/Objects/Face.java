@@ -8,19 +8,22 @@ public class Face {
 	public Vector[] vectors;
 	public int[] x, y;
 	public int n;
+	public boolean inside;
 	
-	public Face(Vector[] vs){
+	public Face(Vector[] vs, boolean inside){
 		vectors = vs;
 		n = vs.length;
+		this.inside = inside;
 		fillArrays();
 	}
 	
-	public Face(ArrayList<Vector> vs){
+	public Face(ArrayList<Vector> vs, boolean inside){
 		vectors = new Vector[vs.size()];
 		n = vs.size();
 		for(int i = 0; i < n; i++){
 			vectors[i] = vs.get(i);
 		}
+		this.inside = inside;
 		fillArrays();
 	}
 	
@@ -36,8 +39,9 @@ public class Face {
 	
 	
 	public void drawFace(Graphics2D g2, int dim){
-		
+		g2.setColor(inside ? Color.GREEN : Color.WHITE);
 		g2.fillPolygon(x, y, n);
+		
 		
 	}
 }

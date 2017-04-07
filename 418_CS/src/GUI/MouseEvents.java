@@ -8,6 +8,7 @@ import Objects.Segment;
 
 public class MouseEvents implements MouseListener{
 	public MyCanvas canvas;
+	public Segment s1, s2;		//For testing
 	public MouseEvents(MyCanvas c){
 		canvas = c;
 	}
@@ -25,6 +26,16 @@ public class MouseEvents implements MouseListener{
 		canvas.addPoint(p);
 //		System.out.println("(" + x + "," + y + ")");
 		
+//		pointTest(p[0]);
+	}
+	
+	public void setTest(Segment s){
+		s1 = new Segment(s.lp, s.rp);
+		s2 = new Segment(s.rp, s.lp);
+	}
+	
+	public void pointTest(Point p){
+		System.out.println(p.above(s1)+" and "+p.above(s2));
 	}
 
 	@Override

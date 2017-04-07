@@ -25,7 +25,11 @@ public class Point{
 	}
 	
 	public boolean above(Segment s){
+//		Segment s1 =  new Segment(s.lp, s.rp);
 		double c = -(s.b * y) - (s.a * x);
+//		System.out.println("Inserting segment c: "+c);
+//		System.out.println("new c == old c: " + (s1.c == s.c));
+//		System.out.println(c < s1.c);
 		return c < s.c;
 	}
 	

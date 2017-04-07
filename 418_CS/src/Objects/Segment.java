@@ -51,8 +51,17 @@ public class Segment{
 	}
 	
 	public boolean above(Segment s){
-		boolean b1 = this.lp.above(s.lp);
-		boolean b2 = this.lp.equal(s.lp) && this.rp.above(s.rp);
+		boolean b1 = this.lp.above(s);
+		boolean b2 = this.lp.equal(s.lp) && this.rp.above(s);
+//		System.out.print("Left point above line: "+ b1);
+//		System.out.print(" \t Left points equal and right point above line: "+b2);
+//		System.out.println("/t Verdict: "+(b1 || b2));
+		return b1 || b2;
+	}
+	
+	public boolean endAbove(Segment s){
+		boolean b1 = this.rp.above(s);
+		boolean b2 = this.rp.equal(s.rp) && this.lp.above(s);
 		return b1 || b2;
 	}
 	

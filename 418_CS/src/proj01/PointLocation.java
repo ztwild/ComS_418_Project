@@ -3,6 +3,7 @@ package proj01;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import Objects.Face;
 import Objects.Node;
 import Objects.Point;
 import Objects.Segment;
@@ -12,9 +13,13 @@ import Sorting.Treap;
 
 public class PointLocation {
 
-	public ArrayList<Vector> PointLocation(Point p, Segment[] seg){
+	public void PointLocation(Point p, Segment[] seg){
+		Face face = locatePoint(p, seg);
+		
+	}
+	
+	public Face locatePoint(Point p, Segment[] seg){
 		MergeSort ms = new MergeSort();
-		boolean done = false;
 		int n = seg.length;
 		
 		Segment[] ends = new Segment[n];
@@ -25,74 +30,85 @@ public class PointLocation {
 			starts[i] = dumb;
 		}
 		
-		for(int i = 0; i < n; i++){
-			System.out.print(starts[i].toString());
-		}System.out.println("\r----------------STaRTS----------------");
-		for(int i = 0; i < n; i++){
-			System.out.print(ends[i].toString());
-		}System.out.println("\r----------------EnDS----------------");
-		
 		ends = ms.sortEnd(ends);
 		starts = ms.sortSeg(starts);
+		
+		for(int i = 0; i < n; i++){
+			System.out.print(starts[i].toString()+", ");
+		}System.out.println("\r----------------STaRTS----------------");
+		for(int i = 0; i < n; i++){
+			System.out.print(ends[i].toString()+", ");
+		}System.out.println("\r----------------EnDS----------------");
 		
 		Treap treeSeg = new Treap(starts[0]);
 		int s = 1;
 		int e = 0;
-		Node node = null;
-		while(s < n && e < n && !done){
-			Point start = starts[s].lp;
-			Point end = ends[e].rp;
-			Segment watch;
-			if(end.x <= start.x){
-				watch = ends[e];
+		printTree(treeSeg);	//Prints the initial tree
+		Point start = null;
+		Point end = null;
+		while(e < n){
+			if(s < n){
+				start = starts[s].lp;
+			}end = ends[e].rp;
+			
+			if(p.x < end.x && (s >= n || p.x < start.x)){
+				System.out.println("::::::::LoCaTiNG "+p.toString()+"::::::::");
+				Node node = treeSeg.findSegment(p);	//returns the segment below point
+				boolean inside = (node.prev() != null && node.next() != null);
+				System.out.println("Point is inside the polygon: "+inside);
+				Segment segment = (inside ? node.prev().seg : starts[0]);
+				return getFace(segment, inside);
+			}else if((s >= n && end.x <= p.x) || (s < n && end.x <= start.x)){
+				System.out.println("::::::::DeLeTiNG "+ends[e].toString()+"::::::::");
 				treeSeg.deleteSegment(ends[e++]);
-			}else if(start.x <= p.x){
-				watch = starts[s];
-				treeSeg.insert(starts[s++]);
 			}else{
-				node = treeSeg.findSegment(p);	//returns the segment below point
-				done = true;
+				System.out.println("::::::::aDDiNG "+starts[s].toString()+"::::::::");
+				treeSeg.insert(starts[s++]);
 			}
-			printTree(treeSeg.root);
+			printTree(treeSeg);		//Prints tree after insertion/deletion
 		}
-		
-		Point pt = null;
-		ArrayList<Vector> vctrs = new ArrayList();
-		if(node != null && 
-				node.prev() != null && 
-				node.next() != null){
-			node = node.prev();
-			pt = node.seg.lp;
-			ArrayList<Vector> ptVctrs = pt.vectors;	//Copy vectors from the point
-			Vector v = null;
-			for(int i = 0; i < ptVctrs.size(); i++){	//find the vector with same segment
-				if(ptVctrs.get(i).seg == node.seg){
-					v = ptVctrs.get(i);
-					break;
-				}
-			}
-			Vector temp = v;
-			vctrs = new ArrayList(Arrays.asList(temp)); //All Vectors of the face
-			while(temp.next != v){
-				temp = temp.next;
-				vctrs.add(temp);
-				
-			}
-//			System.out.println("------End of Point Location------");
-		}
-		return vctrs;
+		Segment segment = starts[0];	//This is the highest, leftmost segment.
+		return getFace(segment, false) ;  	//Outside the polygon
 	}
 	
-	public void printTree(Node root){
-		Node temp = root;
-		while(temp.left != null){
-			temp = temp.left;
+	public Face getFace(Segment s, boolean inside){
+		ArrayList<Vector> vctrs = new ArrayList();
+		Point pt = s.lp;
+		ArrayList<Vector> ptVctrs = pt.vectors;	//Copy vectors from the point
+		Vector v = null;
+		for(int i = 0; i < ptVctrs.size(); i++){	//find the vector with same segment
+			Vector v1 = ptVctrs.get(i);
+			if(v1.seg.equal(s)){
+				v = v1;
+			}
 		}
-		System.out.print(temp.toString());
-		while(temp.next() != null){
-			temp = temp.next();
-			System.out.print(temp.toString());
-		}System.out.println("\r-----------------TReE-----------------");
+		Vector temp = v;
+		vctrs = new ArrayList(Arrays.asList(temp)); //All Vectors of the face
+		while(temp.next != v){
+			temp = temp.next;
+			vctrs.add(temp);			
+		}
+		return new Face(vctrs, inside);
+	}
+	
+	public static void printTree(Treap t){
+		Node r = t.root;
+		if(r != null){
+			while(r.left != null){
+				r = r.left;
+			}
+			System.out.println("--------TReaP--------");
+			System.out.print(r.toString()+ ", ");
+			while(r.next() != null){
+				r = r.next();
+				System.out.print(r.toString()+ ", ");
+			}
+			System.out.println("\r--------eND oF TReaP--------");
+			
+		}else{
+			System.out.println("!!!!!!!!!! TReaP DoNe !!!!!!!!!!");
+		}
+		
 	}
 	
 }

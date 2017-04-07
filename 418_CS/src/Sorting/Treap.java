@@ -73,9 +73,17 @@ public class Treap {
 			Node temp = root;
 			while(temp != null){
 				if(insert.equal(temp)){
-					temp.delete();
+					Node lastParent = temp.delete();
+					if(lastParent == null){
+						root = null;
+					}
+					while(lastParent != null){
+						root = lastParent;
+						lastParent = lastParent.parent;
+					}
 					temp = null;
-				}else if(insert.above(temp)){
+//				}else if(insert.above(temp)){
+				}else if(insert.endAbove(temp)){
 					temp = temp.right;
 				}else{
 					temp = temp.left;
@@ -96,9 +104,9 @@ public class Treap {
 			}
 		}
 		if(insert.above(insert.parent)){
-			insert.parent.left = insert;
-		}else{
 			insert.parent.right = insert;
+		}else{
+			insert.parent.left = insert;
 		}
 		return insert;
 	}
